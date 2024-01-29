@@ -24,24 +24,23 @@ The hands-on project on Visualizing Static Networks with R is divided into the f
 6. Assign Community Information to Edges and Nodes Data and Then Visualize a Network
 7. Visualize Different Types of Static Networks
 
-   
-
 Network visulaization of nodes and edges with assigined community information
 <p align="center">
-  <img src="https://github.com/Zeinabelmi/Visualizing-static-networks-with-R/assets/114510150/2583d77b-d126-4230-b8e9-3005603a1039" />
+  <img src="  https://github.com/Zeinabelmi/Visualizing-static-networks-with-R/assets/114510150/95c975ff-a206-4e4c-84d3-e036e7d395d7"/>
 </p>
 
 A network with grid_layout
 <p align="center">
-  <img src="https://github.com/Zeinabelmi/Visualizing-static-networks-with-R/assets/114510150/a57da431-4da6-4c9e-887c-8ecfec5394fa" />
+  <img src="https://github.com/Zeinabelmi/Visualizing-static-networks-with-R/assets/114510150/f6d3e537-8620-4105-bcd9-2b37c9187396" />
 </p>
 
 A network layout with layout_with_kk
 <p align="center">
-  <img src="https://github.com/Zeinabelmi/Visualizing-static-networks-with-R/assets/114510150/a4190881-311b-43ad-aa08-4adac8d19545" />
+  <img src="https://github.com/Zeinabelmi/Visualizing-static-networks-with-R/assets/114510150/56cd20d1-2e4a-4a8a-90d9-c9b8b2d0f611" />
 </p>
 
 A network layout with layout_in_circle
 <p align="center">
-  <img src="https://github.com/Zeinabelmi/Visualizing-static-networks-with-R/assets/114510150/61ef7025-7015-409a-ab0a-23308b270c31" />
+  <img src="https://github.com/Zeinabelmi/Visualizing-static-networks-with-R/assets/114510150/d6d28a37-0f72-497d-8110-5530e9d037a8" />
 </p>
+
