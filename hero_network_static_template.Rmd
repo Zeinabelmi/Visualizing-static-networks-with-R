@@ -1,0 +1,242 @@
+---
+title: "hero_netowrk_static_template"
+author: "Zeinab Elmi"
+
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Use this template to follow along in "Visualizing Static Networks with R". Each code chunk you'll need is already created and named. 
+
+**Objectives:**
+
+- Explain what a network is and import libraries
+- Read raw data and calculate the amount of collaboration of marvel heroes
+- Select a weight criterion using a histogram and use the criterion to extract edges
+- Process texts, and then extract nodes information from the edges
+- Create a network based on the edges and nodes components and calculate its communities 
+- Assign community information to edges and nodes data and then visualize a network
+- Visualize different types of static networks
+
+### Task 1. Introduction to networks and load packages
+
+- tidyverse
+- igraph
+- RColorBrewer
+```{r}
+# a. Load packages "tidyverse", "igraph", and "RColorBrewer":
+library(tidyverse)
+library(igraph)
+library(RColorBrewer)
+
+```
+
+### Task 2: Load Data (hero_network.csv) as a dataframe called 'hero', then calculate the amount of collaborations in each pair, and arrange it in a descending order.
+
+The dataset is saved in the hero_network_raw.csv file. We will use tidyverse to process it. 
+
+```{r}
+# a. Read in data as 'hero':
+hero <- read_csv('hero_network_raw.csv')
+```
+
+
+```{r}
+# Creat a new dataset named "hero_collab" from the "hero" dataset based on the following steps 
+# a. Filter out rows where the hero collaborates with him- or herself
+# b. Re-arrange each row in the two columns in an alphabetical order
+# c. Calculate the amount of collaboration
+# d. Arrange it in a descending order
+hero_collab <- hero %>%
+  filter(!(hero1==hero2)) %>%
+  mutate(hero_one = map2_chr(hero1,hero2,min),
+         hero_two=map2_chr(hero1,hero2,max))%>%
+  group_by(hero_one,hero_two)%>%
+  count()%>%
+  arrange(desc(n))%>%
+  ungroup()
+
+
+```
+
+```{r}
+# a. name hero_collab columns from, to, weight
+names(hero_collab) <- c('from','to','weight')
+```
+
+### Task 3: Select weight criteria and extract edges from the hero_collab data
+
+```{r}
+# a. plot a histogram of the weight column in the hero_collab dataframe to choose the right weight criteria 
+hist(hero_collab$weight, breaks= 500, ylim=c(0,10),xlab= "The Amount of Collabaration", main= "The Histogram of Collaboration Amount")
+```
+
+```{r}
+#  a. filter with new criteria and call the new data frame "hero_edges"
+hero_edge <- hero_collab %>%
+  filter(weight> 400)
+```
+
+### Task 4: Text processing and extract nodes from the edge data
+
+```{r}
+# a. capitalize only the initial letter of each word for the "from" column
+# b. for heroes with long names, read the official name and the nick name into two lines
+hero_edge$from <- tools::toTitleCase(tolower(hero_edge$from))
+
+hero_edge$from<- str_replace(as.character(hero_edge$from), "/", "\n")
+```
+
+
+```{r}
+# a. capitalize only the initial letter of each word for the "to" column
+# b. for heroes with long names, read the official name and the nick name into two lines
+hero_edge$to <- tools::toTitleCase(tolower(hero_edge$to))
+
+hero_edge$to<- str_replace(as.character(hero_edge$to), "/", "\n")
+```
+
+
+```{r}
+# a. create node dataframe called "hero_nodes" based on hero_edges dataframe
+# b. de-select the weight column
+# c. mix values in both 'from' and 'to' columns using the unlist() function
+# d. make sure the data is in a dataframe format using data.frame()
+# e. rename the column name 'nodes' using rename()
+hero_nodes <- hero_edge %>%
+  select(-weight)%>%
+  unlist()%>%
+  unique()%>%
+  as.data.frame()%>%
+  rename(.,nodes = .)
+
+```
+
+
+### Task 5: Create network data based on edges and nodes, then calculate community information
+
+```{r}
+# a. use graph_from_data_frame() function from the igraph package to integrate edges and nodes into a network data, and set direction to False
+hero_net <- graph_from_data_frame(d= hero_edge, vertices= hero_nodes, directed=F )
+```
+
+```{r}
+# a. use cluster_fast_greedy() function from the igraph package to calculate communities in the network
+# b. separate community/group information from community data 
+community0 <- cluster_fast_greedy(hero_net)
+community <- igraph :: groups(community0)
+```
+
+### Task 6: Assign community information to nodes and edges data separately and visualize the network
+
+
+```{r}
+# write a function find_community() that identifies community index for each hero
+# a. use the is.element() function to find the element
+# b. use the sapply() function to assign is.element function to the community data
+# c. use which() function to read the community idx that fits the requirement
+find_community <- function(hero_name){
+  community_idx= which(sapply(community,function(e) is.element(hero_name,e))) [[1]]
+}
+
+
+```
+
+
+```{r}
+# a. assign types for nodes
+hero_nodes$group <- map_dbl(hero_nodes$nodes, find_community)
+# b. save the nodes info for future use
+write.csv(hero_nodes,"hero_nodes.csv")
+```
+
+```{r}
+# a. assign types for edges based on the 'from' column
+hero_edge$group <- map_dbl(hero_edge$from, find_community)
+# b. save the nodes info for future use
+write.csv(hero_edge, "hero_edges.csv")
+```
+
+```{r}
+# a. create a new network with community information contained in edges and nodes
+hero_net1 <- graph_from_data_frame(d=hero_edge, vertices = hero_nodes, directed= F)
+```
+
+```{r}
+# a. display all colors in the rcolorbrewer and choose a color set you like
+display.brewer.all()
+```
+
+```{r}
+# a. display 6 colors from the color set you chose
+display.brewer.pal(n=6, name= "Set2")
+```
+
+```{r}
+# a. store the chosen 6 colors in a variable called 'type_color'
+type_color <- brewer.pal(n=6, name= "Set2")
+```
+
+
+```{r}
+# a. create a new column 'color' in the 'hero_edges' data that stores color information for each node in the 'from' column
+hero_edge$color <- ifelse(hero_edge$group ==1, type_color[1], ifelse(hero_edge$group ==2, 
+type_color[2], ifelse(hero_edge$group ==3,
+type_color[3], ifelse(hero_edge$group ==4,              type_color[4], ifelse(hero_edge$group ==5, 
+type_color[5],  type_color[6] )))))
+
+
+```
+
+
+```{r}
+# a. create a new column 'color' in the 'hero_nodes' data that stores color information for each node
+hero_nodes$color <- ifelse(hero_nodes$group ==1, type_color[1], ifelse(hero_nodes$group ==2, 
+type_color[2], ifelse(hero_nodes$group ==3,
+type_color[3], ifelse(hero_nodes$group ==4,             type_color[4], ifelse(hero_nodes$group ==5, 
+type_color[5],  type_color[6] )))))
+
+
+```
+
+```{r}
+# a. plot the network, assign layout layout_in_circle, edge.color, edge.width, vertex.color, edge.curve 0.3, vertex.size 40, vertex text color 'black', and vertex text size 0.5
+plot(hero_net1, layout= layout_in_circle, edge.color=hero_edge$color[E(hero_net1)],edge.width= E(hero_net1)$weight/300, vertex.color=hero_nodes$color[V(hero_net1)],edge.curved= 0.3, vertex.size=40, vertex.label.color="black",vertex.label.cex= 0.5, vertex.frame.color="#ffffff00")
+
+
+```
+
+### Task 7. Visualize different types of static networks
+
+```{r}
+# a. look up helper manual of add_layout_ to look at different layout shapes
+? add_layout_
+```
+
+
+```{r}
+# a. a network with grid_layout, square nodes, straight edge, and nodes text in "Helvetica" font
+
+plot(hero_net1, layout= layout_on_grid, edge.color=hero_edge$color[E(hero_net1)],edge.width= E(hero_net1)$weight/300, vertex.color=hero_nodes$color[V(hero_net1)], vertex.size=40, vertex.label.color="black",vertex.label.cex= 0.5, vertex.frame.color="#ffffff00",vertex.shape="square",vertex.label.family= "Helvetica")
+
+```
+
+```{r}
+# a. make network layout layout_with_kk
+
+plot(hero_net1, layout= layout_with_kk, edge.color=hero_edge$color[E(hero_net1)],edge.width= E(hero_net1)$weight/300, vertex.color=hero_nodes$color[V(hero_net1)],edge.curved= 0.3, vertex.size=5, vertex.label.color="black",vertex.label.cex= 0.5, vertex.label.dist=1.5, vetex.label.degree= pi/2)
+
+```
+
+```{r}
+# a. set background color gray, layout_in_circle, vertex label size 0.5
+par(bg = "gray")
+
+plot(hero_net1, layout= layout_in_circle, edge.color=hero_edge$color[E(hero_net1)],edge.width= E(hero_net1)$weight/300, vertex.color=hero_nodes$color[V(hero_net1)],edge.curved= 0.3, vertex.size=5, vertex.label.color="black",vertex.label.cex= 0.5, vertex.label.dist=1.5, vetex.label.degree= pi/2)
+
+```
+
+
