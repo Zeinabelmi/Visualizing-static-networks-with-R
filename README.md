@@ -3,11 +3,11 @@ In daily life, our connections with family and friends form our social networks.
 
 In this course, we are going to focus on three learning objectives:
 
-Learn to preprocess raw data to create nodes and edges
+   Learn to preprocess raw data to create nodes and edges
 
-Learn to create network data using the igraph package
+   Learn to create network data using the igraph package
 
-Learn to visualize static networks with base R functions
+   Learn to visualize static networks with base R functions
 
 By the end of this course, you will be able to visualize static networks with R.
 
