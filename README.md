@@ -26,21 +26,21 @@ The hands-on project on Visualizing Static Networks with R is divided into the f
 
 Network visulaization of nodes and edges with assigined community information
 <p align="center">
-  <img src="  https://github.com/Zeinabelmi/Visualizing-static-networks-with-R/assets/114510150/95c975ff-a206-4e4c-84d3-e036e7d395d7"/>
+  <img src="https://github.com/Zeinabelmi/Visualizing-static-networks-with-R/assets/114510150/f0fa4056-ec59-4caf-9c68-2cc375689825"/>
 </p>
 
 A network with grid_layout
 <p align="center">
-  <img src="https://github.com/Zeinabelmi/Visualizing-static-networks-with-R/assets/114510150/f6d3e537-8620-4105-bcd9-2b37c9187396" />
+  <img src="https://github.com/Zeinabelmi/Visualizing-static-networks-with-R/assets/114510150/68598095-182e-4e5b-a97b-9e9f71488430" />
 </p>
 
 A network layout with layout_with_kk
 <p align="center">
-  <img src="https://github.com/Zeinabelmi/Visualizing-static-networks-with-R/assets/114510150/56cd20d1-2e4a-4a8a-90d9-c9b8b2d0f611" />
+  <img src="https://github.com/Zeinabelmi/Visualizing-static-networks-with-R/assets/114510150/ae2c8641-bc68-42b6-bf42-fb05cdc4718f" />
 </p>
 
 A network layout with layout_in_circle
 <p align="center">
-  <img src="https://github.com/Zeinabelmi/Visualizing-static-networks-with-R/assets/114510150/d6d28a37-0f72-497d-8110-5530e9d037a8" />
+  <img src="https://github.com/Zeinabelmi/Visualizing-static-networks-with-R/assets/114510150/52b40f47-dcc0-4319-8eb0-8664e2c5039d" />
 </p>
 
